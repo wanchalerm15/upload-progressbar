@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>การติดตามสถานะการอัพโหลดไฟล์แบบง่ายๆ</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <h5 class="mt-2">ทำ Progressbar บอกสถานะการ Upload file แบบง่ายๆกัน</h5>
+
+                <!-- แสดงไฟล์ทีอัพโหลดเข้ามา -->
+                <div class="form-group" id="upload-example"></div>
+
+                <!-- Form upload -->
+                <form id="myForm" action="./upload.php" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="file" name="file" id="file" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="submit" value="อัพโหลดไฟล์" class="btn btn-primary btn-block">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- แสดงสถานะการอัพโหลด -->
+                    <div class="progress">
+                        <div class="progress-bar" id="progressbar"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="http://malsup.github.com/min/jquery.form.min.js"></script>
+    <script>
+        var uploadExample = $('#upload-example');
+        var progressBar = $('#progressbar');
+
+        progressBar.parent().hide();
+
+        $('#myForm').ajaxForm({
+            beforeSubmit: function () {
+                progressBar.parent().show();
+            },
+
+            uploadProgress: function (event, position, total, percentComplete) {
+                var width = percentComplete + '%';
+                progressBar.css('width', width);
+                progressBar.text(width);
+            },
+
+            success: function (filename) {
+                uploadExample.empty();
+                if (filename.indexOf('.jpg') >= 0) {
+                    uploadExample.append(`<img src="${filename}" class="img-fluid img-thumbnail" />`);
+                }
+                else if (filename.indexOf('.mp4') >= 0) {
+                    uploadExample.append(`<video controls src="${filename}" width="100%"></video>`);
+                }
+                else {
+                    uploadExample.append(`<a href="${filename}"> ดาวน์โหลดไฟล์นี้ </a>`);
+                }
+
+                progressBar.parent().hide();
+                progressBar.css('width', 0);
+                progressBar.text('');
+            }
+        });
+    </script>
+</body>
+
+</html>
